@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    environment {
+        CHROME_BIN = '/usr/bin/google-chrome' // Adjust this path as necessary
+    }
     tools {nodejs "NODEJS"}
     stages {
         stage('Build') {
