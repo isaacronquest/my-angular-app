@@ -7,6 +7,11 @@ pipeline {
                 sh 'npm install'
             }
         }
+        stage('Test') { // Adding a Test stage
+            steps {
+                sh 'npm test' // Assuming you have tests configured in your package.json
+            }
+        }
         stage('Deliver') {
             steps {
                 sh 'chmod -R +rwx ./jenkins/scripts/deliver.sh'
