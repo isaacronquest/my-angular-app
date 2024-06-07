@@ -1,27 +1,38 @@
 pipeline {
     agent any
-    environment {
-        CHROME_BIN = '/usr/bin/google-chrome' // Adjust this path as necessary
+
+    tools {
+        nodejs 'nodejs'
     }
-    tools {nodejs "NODEJS"}
+
     stages {
-        stage('Build') {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Install Dependencies') {
             steps {
                 sh 'npm install'
             }
         }
-        stage('Test') { // Adding a Test stage
+
+        stage('Build') {
             steps {
-                sh 'npm test' // Assuming you have tests configured in your package.json
+                sh 'ng build --prod'
             }
         }
-        stage('Deliver') {
+
+        stage('Test') {
             steps {
-                sh 'chmod -R +rwx ./jenkins/scripts/deliver.sh'
-                sh 'chmod -R +rwx ./jenkins/scripts/kill.sh'
-                sh './jenkins/scripts/deliver.sh'
-                input message: 'Finished using the web site? (Click "Proceed" to continue)'
-                sh './jenkins/scripts/kill.sh'
+                sh 'ng test'
+            }
+        }
+
+        stage('E2E Tests') {
+            steps {
+                sh 'ng e2e'
             }
         }
     }
