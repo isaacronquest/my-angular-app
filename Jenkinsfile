@@ -1,38 +1,19 @@
 pipeline {
     agent any
-
-    tools {
-        nodejs 'NODEJS'
-    }
-
+    tools {nodejs "NODEJS"}
     stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-
-        stage('Install Dependencies') {
+        stage('Build') {
             steps {
                 sh 'npm install'
             }
         }
-
-        stage('Build') {
+        stage('Deliver') {
             steps {
-                sh 'ng build --prod'
-            }
-        }
-
-        stage('Test') {
-            steps {
-                sh 'ng test'
-            }
-        }
-
-        stage('E2E Tests') {
-            steps {
-                sh 'ng e2e'
+                sh 'chmod -R +rwx ./jenkins/scripts/deliver.sh'
+                sh 'chmod -R +rwx ./jenkins/scripts/kill.sh'
+                sh './jenkins/scripts/deliver.sh'
+                input message: 'Finished using the web site? (Click "Proceed" to continue)'
+                sh './jenkins/scripts/kill.sh'
             }
         }
     }
